@@ -39,16 +39,54 @@ import "fmt"
 // TODO: напиши функцию makeAdder() func(int) int
 // Подсказка: объяви sum := 0 внутри makeAdder,
 // и верни функцию которая меняет sum и возвращает его
+func makeAdder() func(int) int {
+	sum := 0
+	return func(x int) int {
+		sum += x
+		return sum
+	}
+}
 
 // TODO: напиши функцию makeAdderWithReset() (func(int) int, func())
+func makeAdderWithReset() (func(int) int, func()) {
+	sum := 0
+	return func(x int) int {
+			sum += x
+			return sum
+		},
+		func() {
+			sum = 0
+		}
+
+}
+
 // Подсказка: та же идея, но верни два значения - add и reset.
 // Обе функции захватывают одну и ту же переменную sum.
 
 func main() {
 	// TODO: создай два независимых аккумулятора через makeAdder()
 	// и проверь что они не мешают друг другу
+	add1 := makeAdder()
+	add, reset := makeAdderWithReset()
+	fmt.Println("Первый аккумулятор:")
+	fmt.Println(add1(10))
+	fmt.Println(add1(5))
+	fmt.Println(add1(3))
+
+	fmt.Println("Второй аккумулятор (независимый от первого):")
+	fmt.Println(add(100))
+
+	fmt.Println("Первый продолжает с 18:")
+	fmt.Println(add1(1))
+
+	fmt.Println("Аккумулятор с ресетом:")
+	reset()
+	fmt.Println(add(7))
+	fmt.Println(add(3))
+	fmt.Println("reset!")
+	reset()
+	fmt.Println(add(5))
 
 	// TODO: создай аккумулятор с ресетом и проверь reset
 
-	_ = fmt.Println // убери когда начнёшь использовать
 }
