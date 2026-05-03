@@ -68,24 +68,50 @@ package main
 import (
 	"fmt"
 	"sync"
+	"time"
 )
 
 // TODO: напиши функцию worker(id int, jobs <-chan int, results chan<- string, wg *sync.WaitGroup)
+func worker(id int, jobs <-chan int, results chan<- string, wg *sync.WaitGroup) {
+	defer wg.Done()
+	for j := range jobs {
+		time.Sleep(time.Millisecond * 100)
+		results <- fmt.Sprintf("воркер %d: %d^2 = %d", id, j, j*j)
+	}
+}
 
-func main() {
+func runPool() {
 	// TODO: объяви WaitGroup ЛОКАЛЬНО здесь
 	var wg sync.WaitGroup
 
 	// TODO: создай каналы jobs и results
-
+	jobs := make(chan int, 10)
+	results := make(chan string, 10)
 	// TODO: запусти 3 воркера, передавая &wg
-
+	for w := 1; w <= 3; w++ {
+		wg.Add(1)
+		go worker(w, jobs, results, &wg)
+	}
 	// TODO: закинь задачи 1..10 в jobs и закрой jobs
-
+	for j := 1; j <= 10; j++ {
+		jobs <- j
+	}
+	close(jobs)
 	// TODO: запусти горутину которая после wg.Wait() закрывает results
-
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
 	// TODO: выведи все результаты из results через range
+	for r := range results {
+		fmt.Println(r)
+	}
+}
 
-	_ = fmt.Println
-	_ = wg // убери когда начнёшь использовать
+func main() {
+	fmt.Println("=== ПЕРВЫЙ ЗАПУСК ПУЛА ===")
+	runPool()
+
+	fmt.Println("\n=== ВТОРОЙ ЗАПУСК ПУЛА ===")
+	runPool()
 }
