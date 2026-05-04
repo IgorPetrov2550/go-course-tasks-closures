@@ -101,13 +101,13 @@ func main() {
 	}
 	fmt.Println("Тестируем retry:")
 	unstableWithRetry := withRetry(unstable, 5)
-	unstableWithRetry()
+	//unstableWithRetry()
 
-	/*err := unstableWithRetry()
-	if err != nil {
+	/*err := unstableWithRetry()*/
+	if err := unstableWithRetry(); err != nil {
 		fmt.Println("Все попытки провалены, финальная ошибка:", err)
 	} else {
 		fmt.Println("Функция выполнилась без ошибок!")
 	}
-	*/
+
 }
