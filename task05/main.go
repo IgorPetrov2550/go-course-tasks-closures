@@ -75,6 +75,8 @@ func main() {
 				defer wg.Done()
 				// TODO: выведи i
 				// Вопрос: какое значение здесь будет?
+				fmt.Println(i) // Будет 0 1 2 3 4 в случайном порядке т.к. в
+				// go 1.22+ для каждой итерации цикла создается новая переменная i
 			}()
 		}
 		wg.Wait()
@@ -87,7 +89,10 @@ func main() {
 		for i := 0; i < 5; i++ {
 			wg.Add(1)
 			// TODO: go func(n int) { ... }(i)
-			_ = wg // убери
+			go func(n int) {
+				defer wg.Done()
+				fmt.Println(n) // Будет так же
+			}(i)
 		}
 		wg.Wait()
 	}
@@ -99,10 +104,13 @@ func main() {
 		for i := 0; i < 5; i++ {
 			wg.Add(1)
 			// TODO: n := i; go func() { ... }()
-			_ = wg // убери
+			n := i
+			go func() {
+				defer wg.Done()
+				fmt.Println(n)
+			}()
 		}
 		wg.Wait()
 	}
 
-	_ = fmt.Println
 }
