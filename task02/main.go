@@ -67,25 +67,25 @@ func main() {
 	// TODO: создай два независимых аккумулятора через makeAdder()
 	// и проверь что они не мешают друг другу
 	add1 := makeAdder()
+	add2 := makeAdder()
 	add, reset := makeAdderWithReset()
 	fmt.Println("Первый аккумулятор:")
-	fmt.Println(add1(10))
-	fmt.Println(add1(5))
-	fmt.Println(add1(3))
+	fmt.Printf("+10 -> %d\n", add1(10))
+	fmt.Printf("+5  -> %d\n", add1(5))
+	fmt.Printf("+3  -> %d\n", add1(3))
 
 	fmt.Println("Второй аккумулятор (независимый от первого):")
-	fmt.Println(add(100))
+	fmt.Printf("+100 -> %d\n", add2(100))
 
 	fmt.Println("Первый продолжает с 18:")
-	fmt.Println(add1(1))
+	fmt.Printf("+1  -> %d\n", add1(1))
 
 	fmt.Println("Аккумулятор с ресетом:")
-	reset()
-	fmt.Println(add(7))
-	fmt.Println(add(3))
+	fmt.Printf("+7  -> %d\n", add(7))
+	fmt.Printf("+3  -> %d\n", add(3))
 	fmt.Println("reset!")
 	reset()
-	fmt.Println(add(5))
+	fmt.Printf("+5  -> %d\n", add(5))
 
 	// TODO: создай аккумулятор с ресетом и проверь reset
 
