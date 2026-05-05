@@ -43,11 +43,41 @@ import (
 
 // TODO: напиши функцию withLogging(fn func(int) int, name string) func(int) int
 
+func withLogging(fn func(int) int, name string) func(int) int {
+	return func(arg int) int {
+		fmt.Printf("вызов %s(%d)\n", name, arg)
+		result := fn(arg)
+		fmt.Printf("%s(%d) = %d\n", name, arg, result)
+		return result
+	}
+}
+
 // TODO: напиши функцию withRetry(fn func() error, attempts int) func() error
+
+func withRetry(fn func() error, attempts int) func() error {
+	return func() error {
+		var err error
+		for i := 1; i <= attempts; i++ {
+			err = fn()
+			if err == nil {
+				fmt.Printf("Успех на попытке %d\n", i)
+				return nil
+			}
+			fmt.Printf("Попытка %d не удалась: %v\n", i, err)
+		}
+		return err
+	}
+}
 
 func main() {
 	// TODO: создай функцию square := func(n int) int { return n * n }
+	square := func(n int) int { return n * n }
 	// Оберни её через withLogging и вызови несколько раз
+	squareWithLogging := withLogging(square, "square")
+
+	squareWithLogging(5)
+	squareWithLogging(7)
+	squareWithLogging(8)
 
 	// TODO: создай счётчик попыток
 	// attempt := 0
@@ -61,7 +91,23 @@ func main() {
 	//       return nil
 	//   }
 	// Оберни через withRetry(unstable, 5) и вызови
+	attempt := 0
+	unstable := func() error {
+		attempt++
+		if attempt < 3 {
+			return errors.New("сервис недоступен")
+		}
+		return nil
+	}
+	fmt.Println("Тестируем retry:")
+	unstableWithRetry := withRetry(unstable, 5)
+	//unstableWithRetry()
 
-	_ = fmt.Println
-	_ = errors.New // убери когда начнёшь использовать
+	/*err := unstableWithRetry()*/
+	if err := unstableWithRetry(); err != nil {
+		fmt.Println("Все попытки провалены, финальная ошибка:", err)
+	} else {
+		fmt.Println("Функция выполнилась без ошибок!")
+	}
+
 }
